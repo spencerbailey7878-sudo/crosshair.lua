@@ -1,4 +1,5 @@
--- PHONE-FRIENDLY RED + CROSSHAIR
+-- RED + CROSSHAIR
+-- Phone-friendly UI
 -- For your own Roblox experience / Studio
 
 local Players = game:GetService("Players")
@@ -59,24 +60,28 @@ local function updateCrosshair()
 		0.5, yOffset
 	)
 
+	-- TOP
 	top.Size = UDim2.fromOffset(thickness, size)
 	top.Position = UDim2.new(
 		0.5, -thickness / 2,
 		0, -(gap + size)
 	)
 
+	-- BOTTOM
 	bottom.Size = UDim2.fromOffset(thickness, size)
 	bottom.Position = UDim2.new(
 		0.5, -thickness / 2,
 		0, gap
 	)
 
+	-- LEFT
 	left.Size = UDim2.fromOffset(size, thickness)
 	left.Position = UDim2.new(
 		0, -(gap + size),
 		0.5, -thickness / 2
 	)
 
+	-- RIGHT
 	right.Size = UDim2.fromOffset(size, thickness)
 	right.Position = UDim2.new(
 		0, gap,
@@ -93,7 +98,7 @@ end
 updateCrosshair()
 
 --------------------------------------------------
--- MENU
+-- SMALL PHONE MENU
 --------------------------------------------------
 
 local menu = Instance.new("Frame")
@@ -130,7 +135,7 @@ title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = dragBar
 
 --------------------------------------------------
--- MINIMIZE BUTTON
+-- MINIMIZE
 --------------------------------------------------
 
 local minimize = Instance.new("TextButton")
@@ -150,7 +155,7 @@ minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimize
 
 --------------------------------------------------
--- SLIDERS
+-- SLIDER FUNCTION
 --------------------------------------------------
 
 local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
@@ -190,9 +195,10 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 	knobCorner.CornerRadius = UDim.new(1, 0)
 	knobCorner.Parent = knob
 
-	local dragging = false
+	local sliderDragging = false
 
 	local function setValue(inputX)
+
 		local percent = math.clamp(
 			(inputX - bar.AbsolutePosition.X) /
 			bar.AbsoluteSize.X,
@@ -213,16 +219,19 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 	end
 
 	bar.InputBegan:Connect(function(input)
+
 		if input.UserInputType == Enum.UserInputType.MouseButton1
 			or input.UserInputType == Enum.UserInputType.Touch then
 
-			dragging = true
+			sliderDragging = true
 			setValue(input.Position.X)
 		end
 	end)
 
 	UserInputService.InputChanged:Connect(function(input)
-		if dragging then
+
+		if sliderDragging then
+
 			if input.UserInputType == Enum.UserInputType.MouseMovement
 				or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -232,10 +241,11 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 	end)
 
 	UserInputService.InputEnded:Connect(function(input)
+
 		if input.UserInputType == Enum.UserInputType.MouseButton1
 			or input.UserInputType == Enum.UserInputType.Touch then
 
-			dragging = false
+			sliderDragging = false
 		end
 	end)
 
@@ -245,6 +255,10 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 
 	knob.Position = UDim2.new(percent, 0, 0.5, 0)
 end
+
+--------------------------------------------------
+-- CROSSHAIR CONTROLS
+--------------------------------------------------
 
 createSlider("Size", 52, 1, 20, size, function(v)
 	size = v
@@ -277,25 +291,25 @@ createSlider("Y Position", 327, -100, 100, 0, function(v)
 end)
 
 --------------------------------------------------
--- RESTORE BUTTON
+-- SMALL RESTORE BUTTON
 --------------------------------------------------
 
 local restore = Instance.new("TextButton")
 restore.Name = "RestoreButton"
-restore.Size = UDim2.fromOffset(50, 50)
-restore.Position = UDim2.new(0, 15, 0.5, -25)
+restore.Size = UDim2.fromOffset(38, 38)
+restore.Position = UDim2.new(0, 12, 0.5, -19)
 restore.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 restore.BorderSizePixel = 0
 restore.Text = "☰"
 restore.TextColor3 = Color3.fromRGB(255, 255, 255)
-restore.TextSize = 22
+restore.TextSize = 17
 restore.Font = Enum.Font.GothamBold
 restore.Visible = false
 restore.ZIndex = 10
 restore.Parent = gui
 
 local restoreCorner = Instance.new("UICorner")
-restoreCorner.CornerRadius = UDim.new(0, 10)
+restoreCorner.CornerRadius = UDim.new(0, 8)
 restoreCorner.Parent = restore
 
 --------------------------------------------------
@@ -307,51 +321,41 @@ minimize.MouseButton1Click:Connect(function()
 	restore.Visible = true
 end)
 
-restore.MouseButton1Click:Connect(function()
-	menu.Visible = true
-	restore.Visible = false
-end)
-
 --------------------------------------------------
 -- DRAG MENU
 --------------------------------------------------
 
-local draggingMenu = false
-local dragStart
-local startPosition
+local menuDragging = false
+local menuDragStart
+local menuStartPosition
 
 dragBar.InputBegan:Connect(function(input)
+
 	if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
 
-		draggingMenu = true
-		dragStart = input.Position
-		startPosition = menu.Position
+		menuDragging = true
+		menuDragStart = input.Position
+		menuStartPosition = menu.Position
 	end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-	if draggingMenu then
+
+	if menuDragging then
+
 		if input.UserInputType == Enum.UserInputType.MouseMovement
 			or input.UserInputType == Enum.UserInputType.Touch then
 
-			local delta = input.Position - dragStart
+			local delta = input.Position - menuDragStart
 
 			menu.Position = UDim2.new(
-				startPosition.X.Scale,
-				startPosition.X.Offset + delta.X,
-				startPosition.Y.Scale,
-				startPosition.Y.Offset + delta.Y
+				menuStartPosition.X.Scale,
+				menuStartPosition.X.Offset + delta.X,
+				menuStartPosition.Y.Scale,
+				menuStartPosition.Y.Offset + delta.Y
 			)
 		end
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1
-		or input.UserInputType == Enum.UserInputType.Touch then
-
-		draggingMenu = false
 	end
 end)
 
@@ -365,6 +369,7 @@ local restoreDragStart
 local restoreStartPosition
 
 restore.InputBegan:Connect(function(input)
+
 	if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -376,13 +381,17 @@ restore.InputBegan:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
+
 	if restoreDragging then
+
 		if input.UserInputType == Enum.UserInputType.MouseMovement
 			or input.UserInputType == Enum.UserInputType.Touch then
 
 			local delta = input.Position - restoreDragStart
 
-			if math.abs(delta.X) > 5 or math.abs(delta.Y) > 5 then
+			if math.abs(delta.X) > 5
+				or math.abs(delta.Y) > 5 then
+
 				restoreMoved = true
 			end
 
@@ -397,6 +406,7 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 UserInputService.InputEnded:Connect(function(input)
+
 	if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -410,11 +420,13 @@ UserInputService.InputEnded:Connect(function(input)
 end)
 
 --------------------------------------------------
--- RIGHT SHIFT TOGGLE
+-- RIGHT SHIFT
 --------------------------------------------------
 
 UserInputService.InputBegan:Connect(function(input, processed)
+
 	if not processed and input.KeyCode == Enum.KeyCode.RightShift then
+
 		menu.Visible = not menu.Visible
 		restore.Visible = not menu.Visible
 	end
