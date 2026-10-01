@@ -20,7 +20,6 @@ local size = 6
 local gap = 4
 local thickness = 2
 local transparency = 0
-
 local enabled = true
 local xOffset = 0
 local yOffset = 0
@@ -45,7 +44,6 @@ local function makeLine(name)
 	line.BorderSizePixel = 0
 	line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	line.Parent = crosshair
-
 	lines[name] = line
 	return line
 end
@@ -57,46 +55,32 @@ local right = makeLine("Right")
 
 local function updateCrosshair()
 	crosshair.Position = UDim2.new(
-		0.5,
-		xOffset,
-		0.5,
-		yOffset
+		0.5, xOffset,
+		0.5, yOffset
 	)
 
-	-- TOP
 	top.Size = UDim2.fromOffset(thickness, size)
 	top.Position = UDim2.new(
-		0.5,
-		-thickness / 2,
-		0,
-		-(gap + size)
+		0.5, -thickness / 2,
+		0, -(gap + size)
 	)
 
-	-- BOTTOM
 	bottom.Size = UDim2.fromOffset(thickness, size)
 	bottom.Position = UDim2.new(
-		0.5,
-		-thickness / 2,
-		0,
-		gap
+		0.5, -thickness / 2,
+		0, gap
 	)
 
-	-- LEFT
 	left.Size = UDim2.fromOffset(size, thickness)
 	left.Position = UDim2.new(
-		0,
-		-(gap + size),
-		0.5,
-		-thickness / 2
+		0, -(gap + size),
+		0.5, -thickness / 2
 	)
 
-	-- RIGHT
 	right.Size = UDim2.fromOffset(size, thickness)
 	right.Position = UDim2.new(
-		0,
-		gap,
-		0.5,
-		-thickness / 2
+		0, gap,
+		0.5, -thickness / 2
 	)
 
 	for _, line in pairs(lines) do
@@ -166,7 +150,7 @@ minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimize
 
 --------------------------------------------------
--- SLIDER FUNCTION
+-- SLIDERS
 --------------------------------------------------
 
 local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
@@ -209,7 +193,6 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 	local dragging = false
 
 	local function setValue(inputX)
-
 		local percent = math.clamp(
 			(inputX - bar.AbsolutePosition.X) /
 			bar.AbsoluteSize.X,
@@ -223,20 +206,13 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 			0.5
 		)
 
-		knob.Position = UDim2.new(
-			percent,
-			0,
-			0.5,
-			0
-		)
-
+		knob.Position = UDim2.new(percent, 0, 0.5, 0)
 		label.Text = name .. ": " .. tostring(value)
 
 		callback(value)
 	end
 
 	bar.InputBegan:Connect(function(input)
-
 		if input.UserInputType == Enum.UserInputType.MouseButton1
 			or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -246,9 +222,7 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 	end)
 
 	UserInputService.InputChanged:Connect(function(input)
-
 		if dragging then
-
 			if input.UserInputType == Enum.UserInputType.MouseMovement
 				or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -258,7 +232,6 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 	end)
 
 	UserInputService.InputEnded:Connect(function(input)
-
 		if input.UserInputType == Enum.UserInputType.MouseButton1
 			or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -270,17 +243,8 @@ local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 		(defaultValue - minValue) /
 		(maxValue - minValue)
 
-	knob.Position = UDim2.new(
-		percent,
-		0,
-		0.5,
-		0
-	)
+	knob.Position = UDim2.new(percent, 0, 0.5, 0)
 end
-
---------------------------------------------------
--- SLIDERS
---------------------------------------------------
 
 createSlider("Size", 52, 1, 20, size, function(v)
 	size = v
@@ -357,7 +321,6 @@ local dragStart
 local startPosition
 
 dragBar.InputBegan:Connect(function(input)
-
 	if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -368,9 +331,7 @@ dragBar.InputBegan:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-
 	if draggingMenu then
-
 		if input.UserInputType == Enum.UserInputType.MouseMovement
 			or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -387,7 +348,6 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-
 	if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
 
@@ -396,13 +356,65 @@ UserInputService.InputEnded:Connect(function(input)
 end)
 
 --------------------------------------------------
+-- DRAG RESTORE BUTTON
+--------------------------------------------------
+
+local restoreDragging = false
+local restoreMoved = false
+local restoreDragStart
+local restoreStartPosition
+
+restore.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+		restoreDragging = true
+		restoreMoved = false
+		restoreDragStart = input.Position
+		restoreStartPosition = restore.Position
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if restoreDragging then
+		if input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch then
+
+			local delta = input.Position - restoreDragStart
+
+			if math.abs(delta.X) > 5 or math.abs(delta.Y) > 5 then
+				restoreMoved = true
+			end
+
+			restore.Position = UDim2.new(
+				restoreStartPosition.X.Scale,
+				restoreStartPosition.X.Offset + delta.X,
+				restoreStartPosition.Y.Scale,
+				restoreStartPosition.Y.Offset + delta.Y
+			)
+		end
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
+
+		if restoreDragging and not restoreMoved then
+			menu.Visible = true
+			restore.Visible = false
+		end
+
+		restoreDragging = false
+	end
+end)
+
+--------------------------------------------------
 -- RIGHT SHIFT TOGGLE
 --------------------------------------------------
 
 UserInputService.InputBegan:Connect(function(input, processed)
-
 	if not processed and input.KeyCode == Enum.KeyCode.RightShift then
-
 		menu.Visible = not menu.Visible
 		restore.Visible = not menu.Visible
 	end
