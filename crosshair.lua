@@ -1,4 +1,4 @@
-crosshair.lua
+
 --// CUSTOM CROSSHAIR + POSITION MENU
 --// Put this LocalScript in:
 --// StarterPlayer > StarterPlayerScripts
