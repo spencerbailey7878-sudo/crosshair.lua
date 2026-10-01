@@ -49,15 +49,11 @@ local lines = {}
 
 local function makeLine(name)
 	local line = Instance.new("Frame")
-
 	line.Name = name
 	line.BorderSizePixel = 0
 	line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-
 	line.Parent = crosshair
-
 	lines[name] = line
-
 	return line
 end
 
@@ -67,7 +63,6 @@ local left = makeLine("Left")
 local right = makeLine("Right")
 
 local function updateCrosshair()
-
 	crosshair.Position = UDim2.new(
 		0.5,
 		Settings.X,
@@ -75,17 +70,7 @@ local function updateCrosshair()
 		Settings.Y
 	)
 
-	for _, line in pairs(lines) do
-		line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-		line.BackgroundTransparency = Settings.Transparency
-		line.Visible = Settings.Enabled
-	end
-
-	top.Size = UDim2.fromOffset(
-		Settings.Thickness,
-		Settings.Size
-	)
-
+	top.Size = UDim2.fromOffset(Settings.Thickness, Settings.Size)
 	top.Position = UDim2.new(
 		0.5,
 		-Settings.Thickness / 2,
@@ -93,11 +78,7 @@ local function updateCrosshair()
 		-(Settings.Gap + Settings.Size)
 	)
 
-	bottom.Size = UDim2.fromOffset(
-		Settings.Thickness,
-		Settings.Size
-	)
-
+	bottom.Size = UDim2.fromOffset(Settings.Thickness, Settings.Size)
 	bottom.Position = UDim2.new(
 		0.5,
 		-Settings.Thickness / 2,
@@ -105,11 +86,7 @@ local function updateCrosshair()
 		Settings.Gap
 	)
 
-	left.Size = UDim2.fromOffset(
-		Settings.Size,
-		Settings.Thickness
-	)
-
+	left.Size = UDim2.fromOffset(Settings.Size, Settings.Thickness)
 	left.Position = UDim2.new(
 		0,
 		-(Settings.Gap + Settings.Size),
@@ -117,17 +94,19 @@ local function updateCrosshair()
 		-Settings.Thickness / 2
 	)
 
-	right.Size = UDim2.fromOffset(
-		Settings.Size,
-		Settings.Thickness
-	)
-
+	right.Size = UDim2.fromOffset(Settings.Size, Settings.Thickness)
 	right.Position = UDim2.new(
 		0,
 		Settings.Gap,
 		0.5,
 		-Settings.Thickness / 2
 	)
+
+	for _, line in pairs(lines) do
+		line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+		line.BackgroundTransparency = Settings.Transparency
+		line.Visible = Settings.Enabled
+	end
 end
 
 --------------------------------------------------
@@ -135,16 +114,9 @@ end
 --------------------------------------------------
 
 local menu = Instance.new("Frame")
-
 menu.Name = "SettingsMenu"
-menu.Size = UDim2.fromOffset(280, 500)
-menu.Position = UDim2.new(
-	0.5,
-	-140,
-	0.5,
-	-250
-)
-
+menu.Size = UDim2.fromOffset(270, 500)
+menu.Position = UDim2.new(0.5, -135, 0.5, -250)
 menu.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 menu.BorderSizePixel = 0
 menu.Active = true
@@ -159,7 +131,6 @@ menuCorner.Parent = menu
 --------------------------------------------------
 
 local dragBar = Instance.new("TextButton")
-
 dragBar.Size = UDim2.new(1, 0, 0, 42)
 dragBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 dragBar.BorderSizePixel = 0
@@ -170,11 +141,10 @@ dragBar.Modal = true
 dragBar.Parent = menu
 
 local title = Instance.new("TextLabel")
-
 title.Size = UDim2.new(1, -55, 1, 0)
 title.Position = UDim2.fromOffset(12, 0)
 title.BackgroundTransparency = 1
-title.Text = "🔴 CROSSHAIR SETTINGS"
+title.Text = "🔴 RED + CROSSHAIR"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 15
 title.Font = Enum.Font.GothamBold
@@ -186,7 +156,6 @@ title.Parent = dragBar
 --------------------------------------------------
 
 local minimize = Instance.new("TextButton")
-
 minimize.Size = UDim2.fromOffset(32, 28)
 minimize.Position = UDim2.new(1, -38, 0, 7)
 minimize.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
@@ -203,22 +172,14 @@ minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimize
 
 --------------------------------------------------
--- SLIDER FUNCTION
+-- SLIDERS
 --------------------------------------------------
 
 local sliderSetters = {}
 
-local function makeSlider(
-	name,
-	y,
-	minValue,
-	maxValue,
-	defaultValue,
-	callback
-)
+local function createSlider(name, y, minValue, maxValue, defaultValue, callback)
 
 	local label = Instance.new("TextLabel")
-
 	label.Size = UDim2.new(1, -24, 0, 22)
 	label.Position = UDim2.fromOffset(12, y)
 	label.BackgroundTransparency = 1
@@ -229,27 +190,25 @@ local function makeSlider(
 	label.TextXAlignment = Enum.TextXAlignment.Left
 	label.Parent = menu
 
-	local slider = Instance.new("TextButton")
+	local bar = Instance.new("TextButton")
+	bar.Size = UDim2.new(1, -24, 0, 12)
+	bar.Position = UDim2.fromOffset(12, y + 25)
+	bar.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+	bar.BorderSizePixel = 0
+	bar.Text = ""
+	bar.AutoButtonColor = false
+	bar.Modal = true
+	bar.Parent = menu
 
-	slider.Size = UDim2.new(1, -24, 0, 12)
-	slider.Position = UDim2.fromOffset(12, y + 25)
-	slider.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
-	slider.BorderSizePixel = 0
-	slider.Text = ""
-	slider.AutoButtonColor = false
-	slider.Modal = true
-	slider.Parent = menu
-
-	local sliderCorner = Instance.new("UICorner")
-	sliderCorner.CornerRadius = UDim.new(1, 0)
-	sliderCorner.Parent = slider
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = bar
 
 	local fill = Instance.new("Frame")
-
 	fill.Size = UDim2.new(0, 0, 1, 0)
 	fill.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	fill.BorderSizePixel = 0
-	fill.Parent = slider
+	fill.Parent = bar
 
 	local fillCorner = Instance.new("UICorner")
 	fillCorner.CornerRadius = UDim.new(1, 0)
@@ -258,7 +217,6 @@ local function makeSlider(
 	local dragging = false
 
 	local function setValue(value)
-
 		value = math.clamp(
 			math.round(value),
 			minValue,
@@ -282,154 +240,91 @@ local function makeSlider(
 		callback(value)
 	end
 
-	local function updateFromX(x)
-
+	local function fromX(x)
 		local percent = math.clamp(
-			(x - slider.AbsolutePosition.X) /
-			slider.AbsoluteSize.X,
+			(x - bar.AbsolutePosition.X) /
+			bar.AbsoluteSize.X,
 			0,
 			1
 		)
 
-		local value =
+		setValue(
 			minValue +
-			(maxValue - minValue) *
-			percent
-
-		setValue(value)
+			(maxValue - minValue) * percent
+		)
 	end
 
-	slider.InputBegan:Connect(function(input)
-
-		if input.UserInputType ==
-			Enum.UserInputType.MouseButton1
-			or input.UserInputType ==
-			Enum.UserInputType.Touch then
+	bar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
 
 			dragging = true
-
-			updateFromX(input.Position.X)
+			fromX(input.Position.X)
 		end
 	end)
 
 	UserInputService.InputChanged:Connect(function(input)
+		if dragging then
+			if input.UserInputType == Enum.UserInputType.MouseMovement
+				or input.UserInputType == Enum.UserInputType.Touch then
 
-		if not dragging then
-			return
-		end
-
-		if input.UserInputType ==
-			Enum.UserInputType.MouseMovement
-			or input.UserInputType ==
-			Enum.UserInputType.Touch then
-
-			updateFromX(input.Position.X)
+				fromX(input.Position.X)
+			end
 		end
 	end)
 
 	UserInputService.InputEnded:Connect(function(input)
-
-		if input.UserInputType ==
-			Enum.UserInputType.MouseButton1
-			or input.UserInputType ==
-			Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
 
 			dragging = false
 		end
 	end)
 
 	sliderSetters[name] = setValue
-
 	setValue(defaultValue)
 end
 
---------------------------------------------------
--- SLIDERS
---------------------------------------------------
+createSlider("Size", 52, 1, 30, Settings.Size, function(v)
+	Settings.Size = v
+	updateCrosshair()
+end)
 
-makeSlider(
-	"Size",
-	52,
-	2,
-	30,
-	Settings.Size,
-	function(value)
-		Settings.Size = value
-		updateCrosshair()
-	end
-)
+createSlider("Gap", 107, 0, 30, Settings.Gap, function(v)
+	Settings.Gap = v
+	updateCrosshair()
+end)
 
-makeSlider(
-	"Gap",
-	107,
-	0,
-	30,
-	Settings.Gap,
-	function(value)
-		Settings.Gap = value
-		updateCrosshair()
-	end
-)
+createSlider("Thickness", 162, 1, 10, Settings.Thickness, function(v)
+	Settings.Thickness = v
+	updateCrosshair()
+end)
 
-makeSlider(
-	"Thickness",
-	162,
-	1,
-	10,
-	Settings.Thickness,
-	function(value)
-		Settings.Thickness = value
-		updateCrosshair()
-	end
-)
+createSlider("Transparency", 217, 0, 100, 0, function(v)
+	Settings.Transparency = v / 100
+	updateCrosshair()
+end)
 
-makeSlider(
-	"Transparency",
-	217,
-	0,
-	100,
-	Settings.Transparency * 100,
-	function(value)
-		Settings.Transparency = value / 100
-		updateCrosshair()
-	end
-)
+createSlider("X Position", 272, -500, 500, Settings.X, function(v)
+	Settings.X = v
+	updateCrosshair()
+end)
 
-makeSlider(
-	"X Position",
-	272,
-	-500,
-	500,
-	Settings.X,
-	function(value)
-		Settings.X = value
-		updateCrosshair()
-	end
-)
-
-makeSlider(
-	"Y Position",
-	327,
-	-500,
-	500,
-	Settings.Y,
-	function(value)
-		Settings.Y = value
-		updateCrosshair()
-	end
-)
+createSlider("Y Position", 327, -500, 500, Settings.Y, function(v)
+	Settings.Y = v
+	updateCrosshair()
+end)
 
 --------------------------------------------------
--- CENTER BUTTON
+-- CENTER
 --------------------------------------------------
 
 local centerButton = Instance.new("TextButton")
-
-centerButton.Size = UDim2.new(1, -24, 0, 34)
-centerButton.Position = UDim2.fromOffset(12, 378)
+centerButton.Size = UDim2.new(1, -24, 0, 32)
+centerButton.Position = UDim2.fromOffset(12, 382)
 centerButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
 centerButton.BorderSizePixel = 0
-centerButton.Text = "CENTER CROSSHAIR"
+centerButton.Text = "🎯 CENTER"
 centerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 centerButton.TextSize = 13
 centerButton.Font = Enum.Font.GothamBold
@@ -441,7 +336,6 @@ centerCorner.CornerRadius = UDim.new(0, 7)
 centerCorner.Parent = centerButton
 
 centerButton.MouseButton1Click:Connect(function()
-
 	Settings.X = 0
 	Settings.Y = 0
 
@@ -452,13 +346,12 @@ centerButton.MouseButton1Click:Connect(function()
 end)
 
 --------------------------------------------------
--- CROSSHAIR TOGGLE
+-- ON/OFF
 --------------------------------------------------
 
 local toggle = Instance.new("TextButton")
-
-toggle.Size = UDim2.new(1, -24, 0, 34)
-toggle.Position = UDim2.fromOffset(12, 418)
+toggle.Size = UDim2.new(1, -24, 0, 32)
+toggle.Position = UDim2.fromOffset(12, 420)
 toggle.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
 toggle.BorderSizePixel = 0
 toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -472,29 +365,25 @@ toggleCorner.CornerRadius = UDim.new(0, 7)
 toggleCorner.Parent = toggle
 
 local function updateToggle()
-
 	if Settings.Enabled then
-		toggle.Text = "CROSSHAIR: ON"
+		toggle.Text = "👁️ CROSSHAIR: ON"
 	else
-		toggle.Text = "CROSSHAIR: OFF"
+		toggle.Text = "👁️ CROSSHAIR: OFF"
 	end
 end
 
 toggle.MouseButton1Click:Connect(function()
-
 	Settings.Enabled = not Settings.Enabled
-
 	updateToggle()
 	updateCrosshair()
 end)
 
 --------------------------------------------------
--- SAVE BUTTON
+-- SAVE
 --------------------------------------------------
 
 local saveButton = Instance.new("TextButton")
-
-saveButton.Size = UDim2.new(1, -24, 0, 34)
+saveButton.Size = UDim2.new(1, -24, 0, 32)
 saveButton.Position = UDim2.fromOffset(12, 458)
 saveButton.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
 saveButton.BorderSizePixel = 0
@@ -521,10 +410,9 @@ saveButton.MouseButton1Click:Connect(function()
 		Enabled = Settings.Enabled
 	})
 
-	saveButton.Text = "✓ SETTINGS SAVED"
+	saveButton.Text = "✅ SAVED!"
 
 	task.delay(1.5, function()
-
 		if saveButton then
 			saveButton.Text = "💾 SAVE SETTINGS"
 		end
@@ -536,15 +424,8 @@ end)
 --------------------------------------------------
 
 local restore = Instance.new("TextButton")
-
 restore.Size = UDim2.fromOffset(38, 38)
-restore.Position = UDim2.new(
-	0,
-	12,
-	0.5,
-	-19
-)
-
+restore.Position = UDim2.new(0, 12, 0.5, -19)
 restore.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 restore.BorderSizePixel = 0
 restore.Text = "☰"
@@ -552,6 +433,7 @@ restore.TextColor3 = Color3.fromRGB(255, 255, 255)
 restore.TextSize = 17
 restore.Font = Enum.Font.GothamBold
 restore.Visible = false
+restore.ZIndex = 10
 restore.Modal = true
 restore.Parent = gui
 
@@ -560,32 +442,29 @@ restoreCorner.CornerRadius = UDim.new(0, 8)
 restoreCorner.Parent = restore
 
 --------------------------------------------------
--- CAMERA-SAFE MENU DRAGGING
+-- CAMERA-SAFE MENU DRAG
 --------------------------------------------------
 
 local menuDragging = false
 local dragStart
 local menuStartPosition
 
-local function sinkCameraInput()
+local function sinkInput()
 	return Enum.ContextActionResult.Sink
 end
 
 dragBar.InputBegan:Connect(function(input)
 
-	if input.UserInputType ==
-		Enum.UserInputType.MouseButton1
-		or input.UserInputType ==
-		Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
 		menuDragging = true
-
 		dragStart = input.Position
 		menuStartPosition = menu.Position
 
 		ContextActionService:BindActionAtPriority(
 			"CrosshairMenuDrag",
-			sinkCameraInput,
+			sinkInput,
 			false,
 			Enum.ContextActionPriority.High.Value,
 			Enum.UserInputType.MouseMovement,
@@ -601,13 +480,10 @@ UserInputService.InputChanged:Connect(function(input)
 		return
 	end
 
-	if input.UserInputType ==
-		Enum.UserInputType.MouseMovement
-		or input.UserInputType ==
-		Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch then
 
-		local delta =
-			input.Position - dragStart
+		local delta = input.Position - dragStart
 
 		menu.Position = UDim2.new(
 			menuStartPosition.X.Scale,
@@ -620,10 +496,8 @@ end)
 
 UserInputService.InputEnded:Connect(function(input)
 
-	if input.UserInputType ==
-		Enum.UserInputType.MouseButton1
-		or input.UserInputType ==
-		Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
 		menuDragging = false
 
@@ -634,7 +508,16 @@ UserInputService.InputEnded:Connect(function(input)
 end)
 
 --------------------------------------------------
--- RESTORE BUTTON DRAGGING
+-- MINIMIZE
+--------------------------------------------------
+
+minimize.MouseButton1Click:Connect(function()
+	menu.Visible = false
+	restore.Visible = true
+end)
+
+--------------------------------------------------
+-- RESTORE
 --------------------------------------------------
 
 local restoreDragging = false
@@ -644,14 +527,11 @@ local restoreStartPosition
 
 restore.InputBegan:Connect(function(input)
 
-	if input.UserInputType ==
-		Enum.UserInputType.MouseButton1
-		or input.UserInputType ==
-		Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
 		restoreDragging = true
 		restoreMoved = false
-
 		restoreStart = input.Position
 		restoreStartPosition = restore.Position
 	end
@@ -663,13 +543,10 @@ UserInputService.InputChanged:Connect(function(input)
 		return
 	end
 
-	if input.UserInputType ==
-		Enum.UserInputType.MouseMovement
-		or input.UserInputType ==
-		Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch then
 
-		local delta =
-			input.Position - restoreStart
+		local delta = input.Position - restoreStart
 
 		if math.abs(delta.X) > 5
 			or math.abs(delta.Y) > 5 then
@@ -688,13 +565,10 @@ end)
 
 UserInputService.InputEnded:Connect(function(input)
 
-	if input.UserInputType ==
-		Enum.UserInputType.MouseButton1
-		or input.UserInputType ==
-		Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
 		if restoreDragging and not restoreMoved then
-
 			menu.Visible = true
 			restore.Visible = false
 		end
@@ -704,29 +578,12 @@ UserInputService.InputEnded:Connect(function(input)
 end)
 
 --------------------------------------------------
--- MINIMIZE
---------------------------------------------------
-
-minimize.MouseButton1Click:Connect(function()
-
-	menu.Visible = false
-	restore.Visible = true
-end)
-
---------------------------------------------------
 -- RIGHT SHIFT
 --------------------------------------------------
 
-UserInputService.InputBegan:Connect(function(
-	input,
-	processed
-)
+UserInputService.InputBegan:Connect(function(input, processed)
 
-	if processed then
-		return
-	end
-
-	if input.KeyCode == Enum.KeyCode.RightShift then
+	if not processed and input.KeyCode == Enum.KeyCode.RightShift then
 
 		menu.Visible = not menu.Visible
 		restore.Visible = not menu.Visible
@@ -737,30 +594,18 @@ end)
 -- LOAD SAVED SETTINGS
 --------------------------------------------------
 
-local success, saved =
-	pcall(function()
-		return loadFunction:InvokeServer()
-	end)
+local success, saved = pcall(function()
+	return loadFunction:InvokeServer()
+end)
 
 if success and type(saved) == "table" then
 
-	Settings.Size =
-		saved.Size or Settings.Size
-
-	Settings.Gap =
-		saved.Gap or Settings.Gap
-
-	Settings.Thickness =
-		saved.Thickness or Settings.Thickness
-
-	Settings.Transparency =
-		saved.Transparency or Settings.Transparency
-
-	Settings.X =
-		saved.X or Settings.X
-
-	Settings.Y =
-		saved.Y or Settings.Y
+	Settings.Size = saved.Size or Settings.Size
+	Settings.Gap = saved.Gap or Settings.Gap
+	Settings.Thickness = saved.Thickness or Settings.Thickness
+	Settings.Transparency = saved.Transparency or Settings.Transparency
+	Settings.X = saved.X or Settings.X
+	Settings.Y = saved.Y or Settings.Y
 
 	if saved.Enabled ~= nil then
 		Settings.Enabled = saved.Enabled
@@ -769,11 +614,9 @@ if success and type(saved) == "table" then
 	sliderSetters["Size"](Settings.Size)
 	sliderSetters["Gap"](Settings.Gap)
 	sliderSetters["Thickness"](Settings.Thickness)
-
 	sliderSetters["Transparency"](
 		math.round(Settings.Transparency * 100)
 	)
-
 	sliderSetters["X Position"](Settings.X)
 	sliderSetters["Y Position"](Settings.Y)
 end
